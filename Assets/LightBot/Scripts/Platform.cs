@@ -5,16 +5,15 @@ namespace LightBot.Scripts
 {
     public class Platform : MonoBehaviour
     {
-        [SerializeField] protected Vector2 position;
-        [SerializeField] protected int height;
-        [SerializeField] protected Transform platform;
-        [SerializeField] protected float originalHeightScale = 0.5f;
-
-
+        [field: SerializeField] public Vector2 Position { get; private set; }
+        [field: SerializeField, Min(1)] public int Height { get; private set; }
+        [SerializeField] private Transform platform;
+        [SerializeField] private float originalHeightScale = 0.5f;
+        
         private void OnDrawGizmos()
         {
             platform.localScale =
-                new Vector3(platform.localScale.x, height * originalHeightScale, platform.localScale.z);
+                new Vector3(platform.localScale.x, Height * originalHeightScale, platform.localScale.z);
         }
     }
 }
