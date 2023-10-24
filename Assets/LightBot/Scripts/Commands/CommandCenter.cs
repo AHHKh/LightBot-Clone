@@ -1,6 +1,6 @@
 using System.Collections.Generic;
 
-namespace LightBot.Scripts
+namespace LightBot.Scripts.Commands
 {
     public class CommandCenter
     {

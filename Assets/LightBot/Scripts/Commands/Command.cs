@@ -1,4 +1,4 @@
-namespace LightBot.Scripts
+namespace LightBot.Scripts.Commands
 {
     public abstract class Command
     {

@@ -1,4 +1,4 @@
-namespace LightBot.Scripts
+namespace LightBot.Scripts.Commands
 {
     public class TurnLeftCommand : Command
     {
