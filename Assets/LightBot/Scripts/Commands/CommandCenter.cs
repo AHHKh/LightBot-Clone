@@ -13,12 +13,12 @@ namespace LightBot.Scripts.Commands
 
         public void AddCommand(Command command)
         {
-            
+            _commands.Add(command);
         }
 
         public void RemoveCommand(Command command)
         {
-            
+            _commands.Remove(command);
         }
 
         public void ExecuteCommands()
