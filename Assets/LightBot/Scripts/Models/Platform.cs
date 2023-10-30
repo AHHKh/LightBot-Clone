@@ -6,9 +6,9 @@ namespace LightBot.Scripts.Models
     {
         [field: SerializeField] public Vector2 Position { get; private set; }
         [field: SerializeField, Min(1)] public int Height { get; private set; }
+        [field: SerializeField] public float originalHeightScale { get; private set; } = 0.5f;
         [SerializeField] private Transform platform;
-        [SerializeField] private float originalHeightScale = 0.5f;
-        
+
         private void OnDrawGizmos()
         {
             platform.localScale =

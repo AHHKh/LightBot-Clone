@@ -12,15 +12,30 @@ namespace LightBot.Scripts.Managers
 
         public static LevelManager Instance;
 
+        private int _lightOnCount;
+
         private void Awake()
         {
             CreateInstance();
+            Initialize();
         }
 
         private void CreateInstance()
         {
             if (Instance == null)
                 Instance = this;
+        }
+
+        private void Initialize()
+        {
+            _lightOnCount = 0;
+            AddListenersToLights();
+        }
+
+        private void AddListenersToLights()
+        {
+            foreach (Light l in lights)
+                l.OnSwitchLight += CheckGameLights;
         }
 
         public Platform GetPlatForm(Vector2 place)
@@ -51,6 +66,24 @@ namespace LightBot.Scripts.Managers
                     return null;
             }
             return platforms.Find(x => x.Position == newPosition);
+        }
+
+        public Light GetLight(Platform platform)
+        {
+            return lights.Find(x => x.Platform == platform);
+        }
+
+        private void CheckGameLights(bool turnOn)
+        {
+            _lightOnCount += turnOn ? +1 : -1;
+            if (_lightOnCount == lights.Count)
+                WinGame();
+            Debug.Log($"LightOnCount = {_lightOnCount}");
+        }
+
+        private void WinGame()
+        {
+            Debug.Log("WinGame");
         }
     }
 }
