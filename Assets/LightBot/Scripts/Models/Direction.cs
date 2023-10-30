@@ -1,4 +1,4 @@
-namespace LightBot.Scripts
+namespace LightBot.Scripts.Models
 {
     public enum Direction
     {

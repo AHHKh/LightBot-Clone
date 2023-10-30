@@ -1,3 +1,6 @@
+using System.Collections;
+using LightBot.Scripts.Models;
+
 namespace LightBot.Scripts.Commands
 {
     public class JumpCommand : Command
@@ -6,9 +9,9 @@ namespace LightBot.Scripts.Commands
         {
         }
 
-        public override void Execute()
+        public override IEnumerator Execute()
         {
-            Bot.Jump();
+            yield return Bot.Jump();
         }
     }
 }

@@ -1,3 +1,6 @@
+using System.Collections;
+using LightBot.Scripts.Models;
+
 namespace LightBot.Scripts.Commands
 {
     public class TurnLeftCommand : Command
@@ -6,9 +9,9 @@ namespace LightBot.Scripts.Commands
         {
         }
 
-        public override void Execute()
+        public override IEnumerator Execute()
         {
-            Bot.TurnLeft();
+            yield return Bot.TurnLeft();
         }
     }
 }

@@ -1,20 +1,34 @@
-using System;
 using System.Collections.Generic;
 using LightBot.Scripts.Commands;
+using LightBot.Scripts.Managers;
+using LightBot.Scripts.Models;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 using UnityEngine.UI;
 
 namespace LightBot.Scripts.UI
 {
     public class UIManager : MonoBehaviour
     {
+        [Header("Level Buttons")]
+        [SerializeField] private Button playButton;
+
+        [SerializeField] private Button stopButton;
+        [SerializeField] private Button resetButton;
+        [SerializeField] private Button resetLevelButton;
+        [SerializeField] private Button backButton;
+
+        [Header("Commands Buttons")]
         [SerializeField] private Button moveButton;
+
         [SerializeField] private Button lightButton;
         [SerializeField] private Button turnLeftButton;
         [SerializeField] private Button turnRightButton;
         [SerializeField] private Button jumpButton;
         [SerializeField] private Button p1Button;
         [SerializeField] private Button p2Button;
+
+
         [SerializeField] private Bot bot;
         [SerializeField] private UICommand uiCommandPrefab;
         [SerializeField] private GridLayoutGroup[] commandsParents;
@@ -24,6 +38,12 @@ namespace LightBot.Scripts.UI
 
         private void Awake()
         {
+            playButton.onClick.AddListener(ExecuteCommands);
+            stopButton.onClick.AddListener(StopExecute);
+            resetButton.onClick.AddListener(Reset);
+            resetLevelButton.onClick.AddListener(ResetLevel);
+            backButton.onClick.AddListener(LeaveLevel);
+
             moveButton.onClick.AddListener(MoveCommand);
             lightButton.onClick.AddListener(LightCommand);
             turnLeftButton.onClick.AddListener(TurnLeftCommand);
@@ -33,6 +53,7 @@ namespace LightBot.Scripts.UI
             p2Button.onClick.AddListener(P2Command);
         }
 
+        #region Commands
         private void MoveCommand()
         {
             AddCommand(new MoveCommand(bot), moveButton.image.sprite);
@@ -77,6 +98,8 @@ namespace LightBot.Scripts.UI
             {
                 uiCommand = _uiCommandsPool[0];
                 _uiCommandsPool.Remove(uiCommand);
+                uiCommand.transform.SetParent(commandsParents[_commandsMemoryIndex].transform);
+                uiCommand.transform.SetAsLastSibling();
                 uiCommand.gameObject.SetActive(true);
             }
             return uiCommand;
@@ -86,7 +109,6 @@ namespace LightBot.Scripts.UI
         {
             _uiCommandsPool ??= new List<UICommand>();
             uiCommand.gameObject.SetActive(false);
-            uiCommand.transform.SetAsLastSibling();
             _uiCommandsPool.Add(uiCommand);
         }
 
@@ -101,6 +123,36 @@ namespace LightBot.Scripts.UI
         {
             GameManager.Instance.RemoveCommand(command);
             AddToPool(uiCommand);
+        }
+        #endregion
+
+        private void ExecuteCommands()
+        {
+            stopButton.gameObject.SetActive(true);
+            playButton.gameObject.SetActive(false);
+            GameManager.Instance.ExecuteCommands();
+        }
+
+        private void StopExecute()
+        {
+            stopButton.gameObject.SetActive(false);
+            playButton.gameObject.SetActive(true);
+            GameManager.Instance.StopExecuteCommands();
+        }
+
+        private void Reset()
+        {
+            bot.Reset();
+        }
+
+        private void LeaveLevel()
+        {
+            //todo
+        }
+
+        private void ResetLevel()
+        {
+            SceneManager.LoadScene(SceneManager.GetActiveScene().name);
         }
     }
 }

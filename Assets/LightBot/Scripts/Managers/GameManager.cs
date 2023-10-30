@@ -1,13 +1,14 @@
-using System;
 using LightBot.Scripts.Commands;
 using UnityEngine;
 
-namespace LightBot.Scripts
+namespace LightBot.Scripts.Managers
 {
     public class GameManager : MonoBehaviour
     {
         public static GameManager Instance;
+
         private CommandCenter _commandCenter;
+        private Coroutine _executeCommand;
 
         private void Awake()
         {
@@ -34,6 +35,17 @@ namespace LightBot.Scripts
         public void RemoveCommand(Command command)
         {
             _commandCenter.RemoveCommand(command);
+        }
+
+        public void ExecuteCommands()
+        {
+            _executeCommand = StartCoroutine(_commandCenter.ExecuteCommands());
+        }
+
+        public void StopExecuteCommands()
+        {
+            if (_executeCommand != null)
+                StopCoroutine(_executeCommand);
         }
     }
 }

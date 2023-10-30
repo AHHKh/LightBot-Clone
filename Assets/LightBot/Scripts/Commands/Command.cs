@@ -1,3 +1,6 @@
+using System.Collections;
+using LightBot.Scripts.Models;
+
 namespace LightBot.Scripts.Commands
 {
     public abstract class Command
@@ -9,6 +12,6 @@ namespace LightBot.Scripts.Commands
             Bot = bot;
         }
 
-        public abstract void Execute();
+        public abstract IEnumerator Execute();
     }
 }

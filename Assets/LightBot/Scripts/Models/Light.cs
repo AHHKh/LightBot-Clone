@@ -1,7 +1,7 @@
 using System;
 using UnityEngine;
 
-namespace LightBot.Scripts
+namespace LightBot.Scripts.Models
 {
     public class Light : MonoBehaviour
     {
