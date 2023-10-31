@@ -1,3 +1,4 @@
+using System;
 using LightBot.Scripts.Commands;
 using UnityEngine;
 
@@ -6,6 +7,7 @@ namespace LightBot.Scripts.Managers
     public class GameManager : MonoBehaviour
     {
         public static GameManager Instance;
+        public Action onCommandsDone;
 
         private CommandCenter _commandCenter;
         private Coroutine _executeCommand;
@@ -24,7 +26,12 @@ namespace LightBot.Scripts.Managers
 
         private void CreateCommandCenter()
         {
-            _commandCenter = new CommandCenter();
+            _commandCenter = new CommandCenter(OnCommandsDone);
+        }
+
+        private void OnCommandsDone()
+        {
+            onCommandsDone?.Invoke();
         }
 
         public void AddCommand(Command command)

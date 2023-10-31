@@ -39,8 +39,8 @@ namespace LightBot.Scripts.UI
         private void Awake()
         {
             playButton.onClick.AddListener(ExecuteCommands);
-            stopButton.onClick.AddListener(StopExecute);
-            resetButton.onClick.AddListener(Reset);
+            stopButton.onClick.AddListener(StopAndReset);
+            resetButton.onClick.AddListener(StopAndReset);
             resetLevelButton.onClick.AddListener(ResetLevel);
             backButton.onClick.AddListener(LeaveLevel);
 
@@ -51,6 +51,7 @@ namespace LightBot.Scripts.UI
             jumpButton.onClick.AddListener(JumpCommand);
             p1Button.onClick.AddListener(P1Command);
             p2Button.onClick.AddListener(P2Command);
+            GameManager.Instance.onCommandsDone = () => SetLevelButtons(false, false, true);
         }
 
         #region Commands
@@ -128,20 +129,15 @@ namespace LightBot.Scripts.UI
 
         private void ExecuteCommands()
         {
-            stopButton.gameObject.SetActive(true);
-            playButton.gameObject.SetActive(false);
+            SetLevelButtons(false, true, false);
             GameManager.Instance.ExecuteCommands();
         }
 
-        private void StopExecute()
+        private void StopAndReset()
         {
-            stopButton.gameObject.SetActive(false);
-            playButton.gameObject.SetActive(true);
+            SetLevelButtons(true, false, false);
             GameManager.Instance.StopExecuteCommands();
-        }
-
-        private void Reset()
-        {
+            LevelManager.Instance.Reset();
             bot.Reset();
         }
 
@@ -153,6 +149,13 @@ namespace LightBot.Scripts.UI
         private void ResetLevel()
         {
             SceneManager.LoadScene(SceneManager.GetActiveScene().name);
+        }
+
+        private void SetLevelButtons(bool play, bool stop, bool reset)
+        {
+            playButton.gameObject.SetActive(play);
+            stopButton.gameObject.SetActive(stop);
+            resetButton.gameObject.SetActive(reset);
         }
     }
 }

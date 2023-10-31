@@ -73,12 +73,18 @@ namespace LightBot.Scripts.Managers
             return lights.Find(x => x.Platform == platform);
         }
 
+        public void Reset()
+        {
+            foreach (Light l in lights)
+                l.Reset();
+        }
+
         private void CheckGameLights(bool turnOn)
         {
             _lightOnCount += turnOn ? +1 : -1;
+            Debug.Log($"LightOnCount = {_lightOnCount}");
             if (_lightOnCount == lights.Count)
                 WinGame();
-            Debug.Log($"LightOnCount = {_lightOnCount}");
         }
 
         private void WinGame()

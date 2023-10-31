@@ -9,7 +9,8 @@ namespace LightBot.Scripts.Models
     {
         [SerializeField] private float positionThreshold = 0.05f;
         [SerializeField] private float rotationThreshold = 5f;
-        [SerializeField] private float rotateSpeed = 10;
+        [SerializeField] private float moveSpeed = 10;
+        [SerializeField] private float rotateSpeed = 100;
         private Platform _currentPlatform;
         private Direction _currentDirection;
 
@@ -41,7 +42,8 @@ namespace LightBot.Scripts.Models
                 yield break;
             while ((transform.position - nextPlatform.transform.position).magnitude > positionThreshold)
             {
-                transform.position = Vector3.Lerp(transform.position, nextPlatform.transform.position, Time.deltaTime);
+                transform.position = Vector3.Lerp(transform.position, nextPlatform.transform.position,
+                                                  Time.deltaTime * moveSpeed);
                 yield return null;
             }
             transform.position = nextPlatform.transform.position;
@@ -51,16 +53,16 @@ namespace LightBot.Scripts.Models
         public IEnumerator TurnLeft()
         {
             Debug.Log("TurnLeft");
-            yield return Turn(Vector3.down);
+            yield return Turn(Vector3.down, GetNewDirection(Vector3.down));
         }
 
         public IEnumerator TurnRight()
         {
             Debug.Log("TurnRight");
-            yield return Turn(Vector3.up);
+            yield return Turn(Vector3.up, GetNewDirection(Vector3.up));
         }
 
-        private IEnumerator Turn(Vector3 direction)
+        private IEnumerator Turn(Vector3 direction, Direction newDirection)
         {
             Quaternion newRotation = Quaternion.Euler(transform.rotation.eulerAngles + (direction * 90));
             while ((transform.rotation.eulerAngles - newRotation.eulerAngles).magnitude > rotationThreshold)
@@ -68,7 +70,21 @@ namespace LightBot.Scripts.Models
                 transform.Rotate(direction, Time.deltaTime * rotateSpeed);
                 yield return null;
             }
+            _currentDirection = newDirection;
             transform.rotation = newRotation;
+        }
+
+        private Direction GetNewDirection(Vector3 turnDirection)
+        {
+            return _currentDirection switch //Vector3.up means Right
+            {
+                Direction.None => Direction.None,
+                Direction.Forward => turnDirection == Vector3.up ? Direction.Right : Direction.Left,
+                Direction.Left => turnDirection == Vector3.up ? Direction.Forward : Direction.Backward,
+                Direction.Right => turnDirection == Vector3.up ? Direction.Backward : Direction.Forward,
+                Direction.Backward => turnDirection == Vector3.up ? Direction.Left : Direction.Right,
+                _ => Direction.None,
+            };
         }
 
         public IEnumerator Jump()
@@ -83,7 +99,7 @@ namespace LightBot.Scripts.Models
                                   Vector3.up * (nextPlatform.originalHeightScale * (nextPlatform.Height - 1));
             while ((transform.position - newPosition).magnitude > positionThreshold)
             {
-                transform.position = Vector3.Lerp(transform.position, newPosition, Time.deltaTime);
+                transform.position = Vector3.Lerp(transform.position, newPosition, Time.deltaTime * moveSpeed);
                 yield return null;
             }
             transform.position = newPosition;
@@ -94,11 +110,12 @@ namespace LightBot.Scripts.Models
         public void Reset()
         {
             Debug.Log("reset");
+            _currentDirection = Direction.Forward;
+            _currentPlatform = LevelManager.Instance.GetPlatForm(Vector2.zero);
+            Vector3 newPosition = _currentPlatform.transform.position +
+                                  Vector3.up * (_currentPlatform.originalHeightScale * (_currentPlatform.Height - 1));
+            transform.position = newPosition;
+            transform.rotation = new Quaternion();
         }
-
-        // private void Update()
-        // {
-        //     transform.Rotate(Vector3.up, Time.deltaTime);
-        // }
     }
 }

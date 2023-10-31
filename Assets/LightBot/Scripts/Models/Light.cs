@@ -29,5 +29,11 @@ namespace LightBot.Scripts.Models
             renderer.material = _isLightOn ? onMaterial : offMaterial;
             OnSwitchLight?.Invoke(_isLightOn);
         }
+
+        public void Reset()
+        {
+            if (!_isLightOn) return;
+            SwitchLight();
+        }
     }
 }
