@@ -1,5 +1,6 @@
 using System;
 using LightBot.Scripts.Commands;
+using LightBot.Scripts.Models;
 using UnityEngine;
 
 namespace LightBot.Scripts.Managers
@@ -11,6 +12,8 @@ namespace LightBot.Scripts.Managers
 
         private CommandCenter _commandCenter;
         private Coroutine _executeCommand;
+
+        [SerializeField] private Bot bot;
 
         private void Awake()
         {
@@ -34,14 +37,32 @@ namespace LightBot.Scripts.Managers
             onCommandsDone?.Invoke();
         }
 
-        public void AddCommand(Command command)
+        public Command CreateCommand(MemoryType memoryType, CommandTyp commandTyp)
         {
-            _commandCenter.AddCommand(command);
+            Command command = commandTyp switch
+            {
+                CommandTyp.None => new MoveCommand(bot),
+                CommandTyp.Move => new MoveCommand(bot),
+                CommandTyp.Light => new LightCommand(bot),
+                CommandTyp.TurnLeft => new TurnLeftCommand(bot),
+                CommandTyp.TurnRight => new TurnRightCommand(bot),
+                CommandTyp.Jump => new JumpCommand(bot),
+                CommandTyp.P1 => new ProceduralCommand(bot, MemoryType.Proc1, _commandCenter),
+                CommandTyp.P2 => new ProceduralCommand(bot, MemoryType.Proc2, _commandCenter),
+                _ => throw new ArgumentOutOfRangeException(nameof(commandTyp), commandTyp, null)
+            };
+            AddCommand(memoryType, command);
+            return command;
         }
 
-        public void RemoveCommand(Command command)
+        private void AddCommand(MemoryType memoryType, Command command)
         {
-            _commandCenter.RemoveCommand(command);
+            _commandCenter.AddCommand(memoryType, command);
+        }
+
+        public void RemoveCommand(MemoryType memoryType, Command command)
+        {
+            _commandCenter.RemoveCommand(memoryType, command);
         }
 
         public void ExecuteCommands()
@@ -53,6 +74,7 @@ namespace LightBot.Scripts.Managers
         {
             if (_executeCommand != null)
                 StopCoroutine(_executeCommand);
+            bot.Reset();
         }
     }
 }

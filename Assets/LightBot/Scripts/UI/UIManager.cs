@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using LightBot.Scripts.Commands;
 using LightBot.Scripts.Managers;
@@ -10,17 +11,15 @@ namespace LightBot.Scripts.UI
 {
     public class UIManager : MonoBehaviour
     {
-        [Header("Level Buttons")]
+        //[Header("Level Buttons")]
         [SerializeField] private Button playButton;
-
         [SerializeField] private Button stopButton;
         [SerializeField] private Button resetButton;
         [SerializeField] private Button resetLevelButton;
         [SerializeField] private Button backButton;
 
-        [Header("Commands Buttons")]
+        //[Header("Commands Buttons")]
         [SerializeField] private Button moveButton;
-
         [SerializeField] private Button lightButton;
         [SerializeField] private Button turnLeftButton;
         [SerializeField] private Button turnRightButton;
@@ -28,11 +27,17 @@ namespace LightBot.Scripts.UI
         [SerializeField] private Button p1Button;
         [SerializeField] private Button p2Button;
 
+        //[Header("Memory Buttons")]
+        [SerializeField] private Button memoryButton;
+        [SerializeField] private Button p1MemoryButton;
+        [SerializeField] private Button p2MemoryButton;
+        [SerializeField] private Color selectedMemoryColor;
+        [SerializeField] private Color memoryColor;
 
-        [SerializeField] private Bot bot;
+        //[SerializeField] private Bot bot;
         [SerializeField] private UICommand uiCommandPrefab;
         [SerializeField] private GridLayoutGroup[] commandsParents;
-        private int _commandsMemoryIndex;
+        private MemoryType _commandsMemoryType;
         private UICommand _currentUICommand;
         private List<UICommand> _uiCommandsPool;
 
@@ -51,55 +56,65 @@ namespace LightBot.Scripts.UI
             jumpButton.onClick.AddListener(JumpCommand);
             p1Button.onClick.AddListener(P1Command);
             p2Button.onClick.AddListener(P2Command);
+
+            memoryButton.onClick.AddListener(() => SelectMemory(MemoryType.Main));
+            p1MemoryButton.onClick.AddListener(() => SelectMemory(MemoryType.Proc1));
+            p2MemoryButton.onClick.AddListener(() => SelectMemory(MemoryType.Proc2));
             GameManager.Instance.onCommandsDone = () => SetLevelButtons(false, false, true);
+            SelectMemory(MemoryType.Main);
         }
 
         #region Commands
         private void MoveCommand()
         {
-            AddCommand(new MoveCommand(bot), moveButton.image.sprite);
+            AddCommand(_commandsMemoryType, CreateCommand(CommandTyp.Move), moveButton.image.sprite);
         }
 
         private void LightCommand()
         {
-            AddCommand(new LightCommand(bot), lightButton.image.sprite);
+            AddCommand(_commandsMemoryType, CreateCommand(CommandTyp.Light), lightButton.image.sprite);
         }
 
         private void TurnLeftCommand()
         {
-            AddCommand(new TurnLeftCommand(bot), turnLeftButton.image.sprite);
+            AddCommand(_commandsMemoryType, CreateCommand(CommandTyp.TurnLeft), turnLeftButton.image.sprite);
         }
 
         private void TurnRightCommand()
         {
-            AddCommand(new TurnRightCommand(bot), turnRightButton.image.sprite);
+            AddCommand(_commandsMemoryType, CreateCommand(CommandTyp.TurnRight), turnRightButton.image.sprite);
         }
 
         private void JumpCommand()
         {
-            AddCommand(new JumpCommand(bot), jumpButton.image.sprite);
+            AddCommand(_commandsMemoryType, CreateCommand(CommandTyp.Jump), jumpButton.image.sprite);
         }
 
         private void P1Command()
         {
-            AddCommand(new ProceduralCommand(bot), p1Button.image.sprite);
+            AddCommand(_commandsMemoryType, CreateCommand(CommandTyp.P1), p1Button.image.sprite);
         }
 
         private void P2Command()
         {
-            AddCommand(new ProceduralCommand(bot), p2Button.image.sprite);
+            AddCommand(_commandsMemoryType, CreateCommand(CommandTyp.P2), p2Button.image.sprite);
+        }
+
+        private Command CreateCommand(CommandTyp commandTyp)
+        {
+            return GameManager.Instance.CreateCommand(_commandsMemoryType, commandTyp);
         }
 
         private UICommand GetFromPool()
         {
             UICommand uiCommand;
             if (_uiCommandsPool == null || _uiCommandsPool.Count == 0)
-                uiCommand = Instantiate(uiCommandPrefab, commandsParents[_commandsMemoryIndex].transform);
+                uiCommand = Instantiate(uiCommandPrefab, commandsParents[(int)(_commandsMemoryType - 1)].transform);
             else
             {
                 uiCommand = _uiCommandsPool[0];
                 _uiCommandsPool.Remove(uiCommand);
-                uiCommand.transform.SetParent(commandsParents[_commandsMemoryIndex].transform);
+                uiCommand.transform.SetParent(commandsParents[(int)(_commandsMemoryType - 1)].transform);
                 uiCommand.transform.SetAsLastSibling();
                 uiCommand.gameObject.SetActive(true);
             }
@@ -113,17 +128,45 @@ namespace LightBot.Scripts.UI
             _uiCommandsPool.Add(uiCommand);
         }
 
-        private void AddCommand(Command command, Sprite sprite)
+        private void AddCommand(MemoryType memoryType, Command command, Sprite sprite)
         {
-            GameManager.Instance.AddCommand(command);
             _currentUICommand = GetFromPool();
-            _currentUICommand.Initialize(this, command, sprite);
+            _currentUICommand.Initialize(this, memoryType, command, sprite);
         }
 
-        public void RemoveCommand(UICommand uiCommand, Command command)
+        public void RemoveCommand(UICommand uiCommand, MemoryType memoryType, Command command)
         {
-            GameManager.Instance.RemoveCommand(command);
+            GameManager.Instance.RemoveCommand(memoryType, command);
             AddToPool(uiCommand);
+        }
+        #endregion
+
+        #region Memory
+        private void SelectMemory(MemoryType type)
+        {
+            _commandsMemoryType = type;
+            switch (_commandsMemoryType)
+            {
+                case MemoryType.Main:
+                    memoryButton.image.color = selectedMemoryColor;
+                    p1MemoryButton.image.color = memoryColor;
+                    p2MemoryButton.image.color = memoryColor;
+                    break;
+                case MemoryType.Proc1:
+                    memoryButton.image.color = memoryColor;
+                    p1MemoryButton.image.color = selectedMemoryColor;
+                    p2MemoryButton.image.color = memoryColor;
+                    break;
+                case MemoryType.Proc2:
+                    memoryButton.image.color = memoryColor;
+                    p1MemoryButton.image.color = memoryColor;
+                    p2MemoryButton.image.color = selectedMemoryColor;
+                    break;
+                case MemoryType.None:
+                default:
+                    Debug.LogWarning("No memory selected!");
+                    break;
+            }
         }
         #endregion
 
@@ -138,7 +181,6 @@ namespace LightBot.Scripts.UI
             SetLevelButtons(true, false, false);
             GameManager.Instance.StopExecuteCommands();
             LevelManager.Instance.Reset();
-            bot.Reset();
         }
 
         private void LeaveLevel()

@@ -90,7 +90,6 @@ namespace LightBot.Scripts.Models
         public IEnumerator Jump()
         {
             Debug.Log("Jump");
-
             Platform nextPlatform = LevelManager.Instance.GetNextPlatform(_currentPlatform, _currentDirection);
             if (nextPlatform == null || nextPlatform.Height == _currentPlatform.Height ||
                 nextPlatform.Height > _currentPlatform.Height + 1)
