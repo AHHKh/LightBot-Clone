@@ -41,7 +41,7 @@ namespace LightBot.Scripts.UI
         private UICommand _currentUICommand;
         private List<UICommand> _uiCommandsPool;
 
-        private void Awake()
+        private void Start()
         {
             playButton.onClick.AddListener(ExecuteCommands);
             stopButton.onClick.AddListener(StopAndReset);

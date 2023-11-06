@@ -37,6 +37,8 @@ namespace LightBot.Scripts.Commands
 
         public IEnumerator ExecuteCommands()
         {
+            if (_commands == null || _commands.Count == 0)
+                yield break;
             foreach (Command command in _commands[MemoryType.Main])
                 yield return command.Execute();
             _onCommandsDone?.Invoke();

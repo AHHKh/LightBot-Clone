@@ -14,7 +14,7 @@ namespace LightBot.Scripts.Models
         private Platform _currentPlatform;
         private Direction _currentDirection;
 
-        private void Awake()
+        private void Start()
         {
             Initialize();
         }
