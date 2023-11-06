@@ -38,29 +38,29 @@ namespace LightBot.Scripts.Managers
                 l.OnSwitchLight += CheckGameLights;
         }
 
-        public Platform GetPlatForm(Vector2 place)
+        public Platform GetPlatFormWithPosition(Vector3 place)
         {
             return platforms.Find(x => x.Position == place);
         }
 
         public Platform GetNextPlatform(Platform currentPlatform, Direction direction)
         {
-            Vector2 newPosition = currentPlatform.Position;
+            Vector3 newPosition = currentPlatform.Position;
             switch (direction)
             {
                 case Direction.None:
                     return null;
                 case Direction.Forward:
-                    newPosition += Vector2.right; //(1,0)
+                    newPosition += Vector3.right; //(1,0)
                     break;
                 case Direction.Left:
-                    newPosition += Vector2.up; //(0,1)
+                    newPosition += Vector3.up; //(0,1)
                     break;
                 case Direction.Right:
-                    newPosition += Vector2.down; //(0,-1)
+                    newPosition += Vector3.down; //(0,-1)
                     break;
                 case Direction.Backward:
-                    newPosition += Vector2.left; //(-1,0)
+                    newPosition += Vector3.left; //(-1,0)
                     break;
                 default:
                     return null;
@@ -73,7 +73,7 @@ namespace LightBot.Scripts.Managers
             return lights.Find(x => x.Platform == platform);
         }
 
-        public void Reset()
+        public void ResetLevel()
         {
             foreach (Light l in lights)
                 l.Reset();

@@ -9,7 +9,7 @@ using UnityEngine.UI;
 
 namespace LightBot.Scripts.UI
 {
-    public class UIManager : MonoBehaviour
+    public class UILevelManager : MonoBehaviour
     {
         //[Header("Level Buttons")]
         [SerializeField] private Button playButton;
@@ -28,6 +28,7 @@ namespace LightBot.Scripts.UI
         [SerializeField] private Button p2Button;
 
         //[Header("Memory Buttons")]
+        [SerializeField] private UIMemory[] memories;
         [SerializeField] private Button memoryButton;
         [SerializeField] private Button p1MemoryButton;
         [SerializeField] private Button p2MemoryButton;
@@ -41,7 +42,7 @@ namespace LightBot.Scripts.UI
         private UICommand _currentUICommand;
         private List<UICommand> _uiCommandsPool;
 
-        private void Awake()
+        private void Start()
         {
             playButton.onClick.AddListener(ExecuteCommands);
             stopButton.onClick.AddListener(StopAndReset);
@@ -62,6 +63,14 @@ namespace LightBot.Scripts.UI
             p2MemoryButton.onClick.AddListener(() => SelectMemory(MemoryType.Proc2));
             GameManager.Instance.onCommandsDone = () => SetLevelButtons(false, false, true);
             SelectMemory(MemoryType.Main);
+        }
+
+        private void InitializeMemories()
+        {
+            for (int i = 0; i < memories.Length; i++)
+            {
+                //memories[i].Initialize(, selectedMemoryColor, memoryColor);
+            }
         }
 
         #region Commands
@@ -180,7 +189,7 @@ namespace LightBot.Scripts.UI
         {
             SetLevelButtons(true, false, false);
             GameManager.Instance.StopExecuteCommands();
-            LevelManager.Instance.Reset();
+            LevelManager.Instance.ResetLevel();
         }
 
         private void LeaveLevel()
