@@ -9,7 +9,7 @@ namespace LightBot.Scripts.UI
     public class UICommand : MonoBehaviour
     {
         [SerializeField] private Button commandButton;
-        private UIManager _manager;
+        private UILevel _level;
         private MemoryType _memoryType;
         private Command _command;
 
@@ -18,17 +18,17 @@ namespace LightBot.Scripts.UI
             commandButton.onClick.AddListener(RemoveFromCommand);
         }
 
-        public void Initialize(UIManager manager, MemoryType memoryType, Command command, Sprite sprite)
+        public void Initialize(UILevel level, MemoryType memoryType, Command command, Sprite sprite)
         {
             commandButton.image.sprite = sprite;
-            _manager = manager;
+            _level = level;
             _memoryType = memoryType;
             _command = command;
         }
 
         private void RemoveFromCommand()
         {
-            _manager.RemoveCommand(this,_memoryType, _command);
+            _level.RemoveCommand(this,_memoryType, _command);
         }
     }
 }

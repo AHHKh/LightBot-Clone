@@ -9,7 +9,7 @@ using UnityEngine.UI;
 
 namespace LightBot.Scripts.UI
 {
-    public class UIManager : MonoBehaviour
+    public class UILevel : MonoBehaviour
     {
         //[Header("Level Buttons")]
         [SerializeField] private Button playButton;

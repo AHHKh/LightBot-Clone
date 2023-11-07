@@ -47,8 +47,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   <Position>k__BackingField: {x: 0, y: 0}
   <Height>k__BackingField: 1
+  <originalHeightScale>k__BackingField: 0.3
   platform: {fileID: 2959805082549564682}
-  originalHeightScale: 0.5
 --- !u!1 &5072241531964917192
 GameObject:
   m_ObjectHideFlags: 0

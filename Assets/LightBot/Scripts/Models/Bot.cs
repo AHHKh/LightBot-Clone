@@ -21,8 +21,7 @@ namespace LightBot.Scripts.Models
 
         private void Initialize()
         {
-            _currentPlatform = LevelManager.Instance.GetPlatForm(Vector2.zero); //todo need init data from LevelManager
-            _currentDirection = Direction.Forward; //todo need init data from LevelManager
+            Reset();
         }
 
         #region Commands
@@ -40,14 +39,7 @@ namespace LightBot.Scripts.Models
             Platform nextPlatform = LevelManager.Instance.GetNextPlatform(_currentPlatform, _currentDirection);
             if (nextPlatform == null || nextPlatform.Height != _currentPlatform.Height)
                 yield break;
-            while ((transform.position - nextPlatform.transform.position).magnitude > positionThreshold)
-            {
-                transform.position = Vector3.Lerp(transform.position, nextPlatform.transform.position,
-                                                  Time.deltaTime * moveSpeed);
-                yield return null;
-            }
-            transform.position = nextPlatform.transform.position;
-            _currentPlatform = nextPlatform;
+            yield return Motion(nextPlatform);
         }
 
         public IEnumerator TurnLeft()
@@ -94,8 +86,12 @@ namespace LightBot.Scripts.Models
             if (nextPlatform == null || nextPlatform.Height == _currentPlatform.Height ||
                 nextPlatform.Height > _currentPlatform.Height + 1)
                 yield break;
-            Vector3 newPosition = nextPlatform.transform.position +
-                                  Vector3.up * (nextPlatform.originalHeightScale * (nextPlatform.Height - 1));
+            yield return Motion(nextPlatform);
+        }
+
+        private IEnumerator Motion(Platform nextPlatform)
+        {
+            Vector3 newPosition = GetCorrectPosition(nextPlatform);
             while ((transform.position - newPosition).magnitude > positionThreshold)
             {
                 transform.position = Vector3.Lerp(transform.position, newPosition, Time.deltaTime * moveSpeed);
@@ -104,6 +100,12 @@ namespace LightBot.Scripts.Models
             transform.position = newPosition;
             _currentPlatform = nextPlatform;
         }
+
+        private Vector3 GetCorrectPosition(Platform platform)
+        {
+            return  platform.transform.position +
+                    Vector3.up * (platform.originalHeightScale * (platform.Height - 1));
+        }
         #endregion
 
         public void Reset()
@@ -111,9 +113,7 @@ namespace LightBot.Scripts.Models
             Debug.Log("reset");
             _currentDirection = Direction.Forward;
             _currentPlatform = LevelManager.Instance.GetPlatForm(Vector2.zero);
-            Vector3 newPosition = _currentPlatform.transform.position +
-                                  Vector3.up * (_currentPlatform.originalHeightScale * (_currentPlatform.Height - 1));
-            transform.position = newPosition;
+            transform.position = GetCorrectPosition(_currentPlatform);
             transform.rotation = new Quaternion();
         }
     }
