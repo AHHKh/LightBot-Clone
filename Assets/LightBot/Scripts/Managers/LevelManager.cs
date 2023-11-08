@@ -73,7 +73,7 @@ namespace LightBot.Scripts.Managers
             return lights.Find(x => x.Platform == platform);
         }
 
-        public void Reset()
+        public void ResetBoard()
         {
             foreach (Light l in lights)
                 l.Reset();
@@ -90,6 +90,7 @@ namespace LightBot.Scripts.Managers
         private void WinGame()
         {
             Debug.Log("WinGame");
+            GameManager.Instance.WinGame();
         }
     }
 }

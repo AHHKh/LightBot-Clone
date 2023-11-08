@@ -21,7 +21,10 @@ namespace LightBot.Scripts.Commands
         {
             _commands = _commandCenter.GetCommands(_memoryType);
             foreach (Command c in _commands)
-                yield return c.Execute();
+            {
+                GameManager.Instance.currentCommand = c.Execute();
+                yield return GameManager.Instance.currentCommand;
+            }
         }
     }
 }

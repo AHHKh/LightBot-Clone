@@ -2,6 +2,7 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
+using LightBot.Scripts.Managers;
 using LightBot.Scripts.Models;
 
 namespace LightBot.Scripts.Commands
@@ -39,8 +40,11 @@ namespace LightBot.Scripts.Commands
         {
             if (_commands == null || _commands.Count == 0)
                 yield break;
-            foreach (Command command in _commands[MemoryType.Main])
-                yield return command.Execute();
+            foreach (Command c in _commands[MemoryType.Main])
+            {
+                GameManager.Instance.currentCommand = c.Execute();
+                yield return GameManager.Instance.currentCommand;
+            }
             _onCommandsDone?.Invoke();
         }
     }

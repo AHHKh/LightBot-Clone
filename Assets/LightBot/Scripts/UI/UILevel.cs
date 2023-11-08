@@ -178,9 +178,9 @@ namespace LightBot.Scripts.UI
 
         private void StopAndReset()
         {
-            SetLevelButtons(true, false, false);
             GameManager.Instance.StopExecuteCommands();
-            LevelManager.Instance.Reset();
+            GameManager.Instance.ResetLevel();
+            SetLevelButtons(true, false, false);
         }
 
         private void LeaveLevel()

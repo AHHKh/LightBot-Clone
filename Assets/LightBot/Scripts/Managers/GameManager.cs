@@ -1,4 +1,5 @@
 using System;
+using System.Collections;
 using LightBot.Scripts.Commands;
 using LightBot.Scripts.Models;
 using UnityEngine;
@@ -9,9 +10,9 @@ namespace LightBot.Scripts.Managers
     {
         public static GameManager Instance;
         public Action onCommandsDone;
+        public IEnumerator currentCommand;
 
         private CommandCenter _commandCenter;
-        private Coroutine _executeCommand;
 
         [SerializeField] private Bot bot;
 
@@ -67,13 +68,24 @@ namespace LightBot.Scripts.Managers
 
         public void ExecuteCommands()
         {
-            _executeCommand = StartCoroutine(_commandCenter.ExecuteCommands());
+            StartCoroutine(_commandCenter.ExecuteCommands());
+        }
+
+        public void WinGame()
+        {
+            StopExecuteCommands();
         }
 
         public void StopExecuteCommands()
         {
-            if (_executeCommand != null)
-                StopCoroutine(_executeCommand);
+            if (currentCommand != null)
+                StopCoroutine(currentCommand);
+            OnCommandsDone();
+        }
+
+        public void ResetLevel()
+        {
+            LevelManager.Instance.ResetBoard();
             bot.Reset();
         }
     }
