@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using LightBot.Scripts.Models;
 using UnityEngine;
@@ -11,6 +12,7 @@ namespace LightBot.Scripts.Managers
         [SerializeField] private List<Light> lights;
 
         public static LevelManager Instance;
+        public Action onWinLevel;
 
         private int _lightOnCount;
 
@@ -90,7 +92,8 @@ namespace LightBot.Scripts.Managers
         private void WinGame()
         {
             Debug.Log("WinGame");
-            GameManager.Instance.WinGame();
+            GameManager.Instance.StopExecuteCommands();
+            onWinLevel?.Invoke();
         }
     }
 }

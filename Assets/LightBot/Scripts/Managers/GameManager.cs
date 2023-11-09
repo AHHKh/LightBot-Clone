@@ -71,11 +71,6 @@ namespace LightBot.Scripts.Managers
             StartCoroutine(_commandCenter.ExecuteCommands());
         }
 
-        public void WinGame()
-        {
-            StopExecuteCommands();
-        }
-
         public void StopExecuteCommands()
         {
             if (currentCommand != null)

@@ -17,6 +17,7 @@ namespace LightBot.Scripts.UI
         [SerializeField] private Button resetButton;
         [SerializeField] private Button resetLevelButton;
         [SerializeField] private Button backButton;
+        [SerializeField] private Button nextLevelButton;
 
         //[Header("Commands Buttons")]
         [SerializeField] private Button moveButton;
@@ -48,6 +49,8 @@ namespace LightBot.Scripts.UI
             resetButton.onClick.AddListener(StopAndReset);
             resetLevelButton.onClick.AddListener(ResetLevel);
             backButton.onClick.AddListener(LeaveLevel);
+            nextLevelButton.onClick.AddListener(NextLevel);
+
 
             moveButton.onClick.AddListener(MoveCommand);
             lightButton.onClick.AddListener(LightCommand);
@@ -60,7 +63,9 @@ namespace LightBot.Scripts.UI
             memoryButton.onClick.AddListener(() => SelectMemory(MemoryType.Main));
             p1MemoryButton.onClick.AddListener(() => SelectMemory(MemoryType.Proc1));
             p2MemoryButton.onClick.AddListener(() => SelectMemory(MemoryType.Proc2));
-            GameManager.Instance.onCommandsDone = () => SetLevelButtons(false, false, true);
+            SetLevelButtons(true, false, false, false);
+            GameManager.Instance.onCommandsDone = () => SetLevelButtons(false, false, true, false);
+            LevelManager.Instance.onWinLevel = () => SetLevelButtons(false, false, true, true);
             SelectMemory(MemoryType.Main);
         }
 
@@ -172,7 +177,7 @@ namespace LightBot.Scripts.UI
 
         private void ExecuteCommands()
         {
-            SetLevelButtons(false, true, false);
+            SetLevelButtons(false, true, false, false);
             GameManager.Instance.ExecuteCommands();
         }
 
@@ -180,12 +185,20 @@ namespace LightBot.Scripts.UI
         {
             GameManager.Instance.StopExecuteCommands();
             GameManager.Instance.ResetLevel();
-            SetLevelButtons(true, false, false);
+            SetLevelButtons(true, false, false, false);
         }
 
         private void LeaveLevel()
         {
-            //todo
+            SceneManager.LoadScene(0);
+        }
+
+        private void NextLevel() {
+            int levelBuildIndex = SceneManager.GetActiveScene().buildIndex;
+            if (levelBuildIndex < SceneManager.sceneCountInBuildSettings - 1)
+                SceneManager.LoadScene(levelBuildIndex + 1);
+            else
+                LeaveLevel();
         }
 
         private void ResetLevel()
@@ -193,11 +206,12 @@ namespace LightBot.Scripts.UI
             SceneManager.LoadScene(SceneManager.GetActiveScene().name);
         }
 
-        private void SetLevelButtons(bool play, bool stop, bool reset)
+        private void SetLevelButtons(bool play, bool stop, bool reset,bool nextLevel)
         {
             playButton.gameObject.SetActive(play);
             stopButton.gameObject.SetActive(stop);
             resetButton.gameObject.SetActive(reset);
+            nextLevelButton.gameObject.SetActive(nextLevel);
         }
     }
 }
