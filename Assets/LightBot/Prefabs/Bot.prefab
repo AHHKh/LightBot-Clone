@@ -244,8 +244,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 3e247f44ad113484389843bea99184ea, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  positionThreshold: 0.05
-  rotationThreshold: 5
+  positionThreshold: 0.1
+  rotationThreshold: 10
   moveSpeed: 10
   rotateSpeed: 300
 --- !u!1 &6050892783916067304
